@@ -7,7 +7,28 @@
 
 module.exports = {
   new: function (req, res) {
+    res.locals.flash = _.clone(req.session.flash);
+    req.session.flash = {};
     res.view();
   },
+  create: (req, res, next) => {
+    // Create a User with the params sent from
+    // the sign-up form --> new.ejs
+    User.create(req.params.all(), function userCreated(err, user) {
+
+      // If there's an error
+      // Redirect the user to the signup page
+      if (err) {
+        req.session.flash = {
+          err: err,
+        };
+
+        return res.redirect('/user/new');
+      }
+
+      res.json(user);
+      req.session.flash = {};
+    });
+  }
 };
 
