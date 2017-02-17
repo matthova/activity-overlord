@@ -6,9 +6,7 @@
  */
 
 module.exports = {
-  new: function (req, res) {
-    res.locals.flash = _.clone(req.session.flash);
-    req.session.flash = {};
+  new: (req, res) => {
     res.view();
   },
   create: (req, res, next) => {
@@ -19,15 +17,11 @@ module.exports = {
       // If there's an error
       // Redirect the user to the signup page
       if (err) {
-        req.session.flash = {
-          err: err,
-        };
-
+        req.session.flash = { err };
         return res.redirect('/user/new');
       }
 
       res.json(user);
-      req.session.flash = {};
     });
   }
 };
