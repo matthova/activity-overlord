@@ -6,11 +6,11 @@
  */
 
 module.exports = {
-  new: (req, res) => {
+  new: function(req, res) {
     res.view();
   },
 
-  create: (req, res, next) => {
+  create: function(req, res, next) {
     // Create a User with the params sent from
     // the sign-up form --> new.ejs
     User.create(req.params.all(), function userCreated(err, user) {
@@ -26,7 +26,7 @@ module.exports = {
     });
   },
 
-  show: (req, res, next) => {
+  show: function(req, res, next) {
     User.findOne(req.param('id'), function foundUser (err, user) {
       if (err) {
         return next(err);
@@ -35,11 +35,12 @@ module.exports = {
         return next();
       }
 
+      const hello = user.toJSON();
       res.view({ user });
     });
   },
 
-  index: (req, res, next) => {
+  index: function(req, res, next) {
     // Get an array of all users in the User collection(e.g. table)
     User.find(function foundUsers (err, users) {
       if (err) {
@@ -49,7 +50,7 @@ module.exports = {
     });
   },
 
-  edit: (req, res, next) => {
+  edit: function(req, res, next) {
     // Find the user from the id passed in via params
     User.findOne(req.param('id'), function foundUser (err, user) {
       if (err) {
@@ -63,7 +64,7 @@ module.exports = {
     });
   },
 
-  update: (req, res, next) => {
+  update: function(req, res, next) {
     User.update(req.param('id'), req.params.all(), function userUpdated (err) {
       if (err) {
         return res.redirect('/user/edit/' + req.param('id'));
@@ -73,7 +74,7 @@ module.exports = {
     });
   },
 
-  destroy: (req, res, next) => {
+  destroy: function(req, res, next) {
     User.findOne(req.param('id'), function foundUser (err, user) {
       if (err) {
         return next(err);
