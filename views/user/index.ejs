@@ -1,5 +1,5 @@
 <div class="container">
-  <h3>Users</h3>
+  <h3>User Administration</h3>
   <table class="table">
     <tr>
       <th>ID</th>
@@ -17,6 +17,11 @@
       <td><%= user.name %></td>
       <td><%= user.title %></td>
       <td><%= user.email %></td>
+      <% if (user.admin) { %>
+        <td><img src="/images/admin.png"></td>
+      <% } else { %>
+        <td><img src="/images/pawn.png"></td>
+      <% } %>
       <td><a href="/user/show/<%= user.id %>" class="btn btn-sm btn-primary">Show</a></td>
       <td><a href="/user/edit/<%= user.id %>" class="btn btn-sm btn-warning">Edit</a></td>
       <td>
