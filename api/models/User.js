@@ -4,6 +4,7 @@
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/documentation/concepts/models-and-orm/models
  */
+const bcrypt = require('bcrypt');
 
 module.exports = {
   schema: true,
@@ -12,21 +13,21 @@ module.exports = {
       type: 'string',
       required: true,
     },
-
     title: {
       type: 'string',
     },
-
     email: {
       type: 'string',
       email: true,
       unique: true,
       required: true,
     },
-
+    admin: {
+      type: 'boolean',
+      defaultsTo: false,
+    },
     encryptedPassword: {
       type: 'string',
-      // required: true,
     },
     toJSON: function() {
       const obj = this.toObject();
@@ -43,7 +44,7 @@ module.exports = {
       return next({ err: ['Password does not match password confirmation.'] });
     }
 
-    require('bcrypt').hash(values.password, 10, function passwordEncrypted(err, encryptedPassword) {
+    bcrypt.hash(values.password, 10, function passwordEncrypted(err, encryptedPassword) {
       if (err) {
         return next(err);
       }
