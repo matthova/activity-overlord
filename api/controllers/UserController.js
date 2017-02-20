@@ -22,6 +22,17 @@ module.exports = {
         return res.redirect('/user/new');
       }
 
+      // Since they have now successfully created an account
+      // Log them in
+      req.session.authenticated = true;
+      req.session.User = user;
+
+      // If the user is also an admin, redirect to the user list
+      if (req.session.User.admin) {
+        res.redirect('/user');
+        return;
+      }
+
       res.redirect('/user/show/' + user.id);
     });
   },
