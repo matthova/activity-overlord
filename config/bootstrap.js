@@ -11,7 +11,7 @@
 
 const bcrypt = require('bcrypt');
 
-function initializeAdminUser(cb) {
+function initializeUsers(cb) {
   User.find(function foundUsers(err, users) {
     if (err) {
       throw new Error(err);
@@ -41,7 +41,29 @@ function initializeAdminUser(cb) {
         if (err) {
           throw new Error(JSON.stringify(err));
         }
-        cb();
+        const userProperties = {
+          name: 'you',
+          title: 'person',
+          email: 'you@you.com',
+          // What keeps anyone from creating an admin user via post?
+          admin: false,
+          password: 'password',
+          confirmation: 'password',
+        };
+        bcrypt.hash('password', 10, function passwordEncrypted(err, encryptedPassword) {
+          if (err) {
+            return next(err);
+          }
+
+          userProperties.encryptedPassword = encryptedPassword;
+
+          User.create(userProperties, function userCreated(err, user) {
+            if (err) {
+              throw new Error(JSON.stringify(err));
+            }
+            cb();
+          });
+        });
       });
     });
   });
@@ -50,5 +72,5 @@ function initializeAdminUser(cb) {
 module.exports.bootstrap = function(cb) {
   // It's very important to trigger this callback method when you are finished
   // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
-  initializeAdminUser(cb);
+  initializeUsers(cb);
 };
