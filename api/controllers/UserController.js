@@ -13,7 +13,15 @@ module.exports = {
   create: function(req, res, next) {
     // Create a User with the params sent from
     // the sign-up form --> new.ejs
-    User.create(req.params.all(), function userCreated(err, user) {
+    const userObject = {
+      name: req.param('name'),
+      title: req.param('title'),
+      email: req.param('email'),
+      password: req.param('password'),
+      confirmation: req.param('confirmation'),
+    };
+
+    User.create(userObject, function userCreated(err, user) {
 
       // If there's an error
       // Redirect the user to the signup page
@@ -27,13 +35,20 @@ module.exports = {
       req.session.authenticated = true;
       req.session.User = user;
 
-      // If the user is also an admin, redirect to the user list
-      if (req.session.User.admin) {
-        res.redirect('/user');
-        return;
-      }
+      // Change status to online
+      User.update(user.id, { online: true }, function (err, updatedUser) {
+        if (err) {
+          return next(err);
+        }
 
-      res.redirect('/user/show/' + user.id);
+        // If the user is also an admin, redirect to the user list
+        if (req.session.User.admin) {
+          res.redirect('/user');
+          return;
+        }
+
+        res.redirect('/user/show/' + updatedUser.id);
+      });
     });
   },
 
@@ -76,7 +91,16 @@ module.exports = {
   },
 
   update: function(req, res, next) {
-    User.update(req.param('id'), req.params.all(), function userUpdated (err) {
+    const userObject = {
+      name: req.param('name'),
+      title: req.param('title'),
+      email: req.param('email'),
+    }
+    if (req.session.User.admin) {
+      userObject.admin = req.param('admin');
+    } 
+
+    User.update(req.param('id'), userObject, function userUpdated (err) {
       if (err) {
         return res.redirect('/user/edit/' + req.param('id'));
       }

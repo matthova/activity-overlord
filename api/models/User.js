@@ -22,12 +22,16 @@ module.exports = {
       unique: true,
       required: true,
     },
-    admin: {
+    encryptedPassword: {
+      type: 'string',
+    },
+    online: {
       type: 'boolean',
       defaultsTo: false,
     },
-    encryptedPassword: {
-      type: 'string',
+    admin: {
+      type: 'boolean',
+      defaultsTo: false,
     },
     toJSON: function() {
       const obj = this.toObject();
